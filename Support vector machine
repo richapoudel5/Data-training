@@ -1,0 +1,33 @@
+set.seed(1)
+> n = 1000
+> nt = 800
+> rep = 1000
+> error_SVM = dim(rep)
+> error_RF = dim(rep)
+> neval = n - nt
+> for (i in 1:rep) {
++     training = sample(1:n, nt)
++     trainingset = germandata[training,]
++     testingset = germandata[-training,]
++     # SVM Analysis
++     x = subset(trainingset,
++                select = c('duration', 'amount', 'installment', 'age'))
++     y = trainingset$Default
++     xPrime = subset(testingset,
++                     select = c('duration', 'amount', 'installment', 'age'))
++     yPrime = testingset$Default
++     svm_model1 = svm(x, y)
++     pred_SVM = predict(svm_model1, xPrime)
++     tableSVM = table(yPrime, pred_SVM)
++     error_SVM[i] = (neval - sum(diag(tableSVM))) / neval
++     #Random Forest Analysis
++     rf_classifier = randomForest(
++         Default ~ .,
++         data = trainingset,
++         ntree = 100,
++         mtry = 2,
++         importance = TRUE
++     )
++     prediction_RF = predict(rf_classifier, testingset)
++     table_RF = table(yPrime, prediction_RF)
++     error_RF[i] = (neval - sum(diag(table_RF))) / neva

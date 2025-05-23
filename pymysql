@@ -1,0 +1,25 @@
+ Establish connection
+conn = pymysql.connect(host="localhost", user="root", password="password", database="mydb")
+cursor = conn.cursor()
+
+# Execute a query
+cursor.execute("SELECT * FROM employees")
+
+# Fetch results
+rows = cursor.fetchall()
+for row in rows:
+    print(row)
+
+# Close connection
+conn.close()
+
+from sqlalchemy import create_engine
+import pandas as pd
+
+# Create connection string
+engine = create_engine("mysql+pymysql://root:password@localhost/mydb")
+
+# Read SQL table into Pandas DataFrame
+df = pd.read_sql("SELECT * FROM sales", con=engine)
+
+print(df.head())
